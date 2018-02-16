@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 def xkcdSpider(baseUrl, basePage):
     url = baseUrl
     page = basePage
-    altText = {}
+    altText = ''
     comicTitle = ''
     print(baseUrl,basePage)
     url = baseUrl+"/"+str(page)+"/"
@@ -25,7 +25,7 @@ def xkcdSpider(baseUrl, basePage):
             comicTitle = link.string
 
     for image in soup.findAll('img',{'alt':comicTitle}):
-        altText[page] = comicTitle+': '+ image.get('title')
+        altText = comicTitle+': '+ image.get('title')
         imgUrl = 'https:'+image.get('src')
         urllib.request.urlretrieve(imgUrl, './images/'+str(page)+'.'+os.path.basename(imgUrl))
 
@@ -34,7 +34,7 @@ def xkcdSpider(baseUrl, basePage):
         nextUrl = baseUrl+link.get('href')
 
     with open('./altTexts.txt','a') as file:
-        file.write(str(page)+': '+altText.get('page','')+'\n')
+        file.write(str(page)+': '+altText+'\n')
 
     if nextRef == '':
         return
@@ -51,5 +51,5 @@ if __name__ == '__main__':
     with open('./altTexts.txt','r') as file:
         latestComic = file.readlines()[-1].split(':')[0]
 
-    # latestComic = '1955'
+    # latestComic = '260'
     xkcdSpider(webpageUrl, latestComic)
